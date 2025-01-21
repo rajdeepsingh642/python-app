@@ -5,7 +5,7 @@ app = Flask(__name__)
 items =  {
          "719cd7fcaa6644698eab0ceec741d867":{
                                           "name": "Green mojhito",
-                                           "price": 160
+                                           "price": 200
                                             },
 
         "d786fd9073a54cf9aa2574662b1c4623":{
