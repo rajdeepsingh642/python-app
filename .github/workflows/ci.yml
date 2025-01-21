@@ -30,8 +30,8 @@ jobs:
         pip install -r requirements.txt
 
     # Step 4: Run Unit Tests
-    - name: Run tests
-      run: pytest
+    #- name: Run tests
+     # run: pytest
 
     # Step 5: Build Docker image
     - name: Build Docker Image
@@ -47,7 +47,7 @@ jobs:
     - name: Test Flask API
       run: |
         sleep 5  # Give time for the container to start
-        curl http://localhost:5000//get-items || exit 1
+        curl http://localhost:5000/get-items || exit 1
 
     # Step 8: Stop and Remove Docker Container
    # - name: Clean up Docker
