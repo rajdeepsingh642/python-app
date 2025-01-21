@@ -12,9 +12,9 @@ pipeline {
              sh "docker build -t radeepsingh642/python-app:$BUILD_NUMBER ."
              }
         }    
-        stage('build image') {
+        stage('docker run') {
             steps {
-             sh "docker run -d -p 5000:5000 radeepsingh642/python-app:$BUILD_NUMBER ."
+             sh "docker run -d -p 5000:5000 radeepsingh642/python-app:$BUILD_NUMBER"
              }
         }     
    }   
