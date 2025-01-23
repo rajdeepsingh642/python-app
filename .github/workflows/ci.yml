@@ -49,8 +49,8 @@ jobs:
         sleep 5  # Give time for the container to start
         curl http://localhost:5000/get-items || exit 1
 
-    # Step 8: Stop and Remove Docker Container
-   # - name: Clean up Docker
-    #  run: |
-   #     docker stop flask-api-test
-  #      docker rm flask-api-test
+     # Step 8: Stop and Remove Docker Container
+    - name: Clean up Docker
+      run: |
+        docker stop flask-api-test
+        docker rm flask-api-test
