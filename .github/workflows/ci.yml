@@ -5,7 +5,7 @@ on:
     branches:
       - main
   pull_request:
-     branches:
+    branches:
       - main
 
 jobs:
@@ -13,44 +13,63 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the repository
+    #   Checkout the repository
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Set up Python (optional, for dependencies check)
+    #  Set up Python (optional, for dependencies check)
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.9"
 
-    # Step 3: Install dependencies
+    #  Install dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # Step 4: Run Unit Tests
-    #- name: Run tests
-     # run: pytest
+    # Log in to Docker Hub using secrets
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Step 5: Build Docker image
-    - name: Build Docker Image
-      run: |
-        docker build -t flask-api:latest .
+    # Extract the GitHub Actions build number
+    - name: Set Build Number
+      id: build_number
+      run: echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
 
-    # Step 6: Run Docker Container
-    - name: Run Docker Container
+    # Build and push the Docker image
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: |
+          rajdeepsingh642/flask-cafeapp:latest
+          rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
+   
+    #  Pull and Run Docker Image
+    - name: Run Docker Image Locally
       run: |
-        docker run -d -p 5000:5000 --name flask-api-test flask-api:latest
+        docker pull rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
+        docker run -d -p 8080:8080 rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
+        sleep 10 # Allow some time for the container to start
+        curl -f http://localhost:8080 || (echo "Container failed to start" && exit 1)
 
-    # Step 7: Test Flask API
-    - name: Test Flask API
-      run: |
-        sleep 5  # Give time for the container to start
-        curl http://localhost:5000/get-items || exit 1
+   
+   
+  # #  Run Docker Container
+  #   - name: Run Docker Container
+  #     run: |
+  #       docker run -d -p 5000:5000 --name flask-api-test flask-api:latest
 
-     # Step 8: Stop and Remove Docker Container
-    - name: Clean up Docker
-      run: |
-        docker stop flask-api-test
-        docker rm flask-api-test
+  #   #  Test Flask API
+  #   - name: Test Flask API
+  #     run: |
+  #       sleep 5  # Give time for the container to start
+  #       curl http://localhost:5000/get-items || exit 1
+
+   
