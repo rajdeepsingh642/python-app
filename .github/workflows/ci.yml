@@ -42,7 +42,7 @@ jobs:
     - name: Get Latest Tag
       id: get_latest_tag
       run: |
-        TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+        TAG=$(git describe --tags --abbrev=0 || echo "v25.0.0")
         echo "Latest tag is: $TAG"
         echo "TAG=$TAG" >> $GITHUB_ENV
 
