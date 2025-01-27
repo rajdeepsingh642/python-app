@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  
 
 jobs:
   build-and-test:
@@ -44,21 +42,21 @@ jobs:
     - name: Get Latest Tag
       id: get_latest_tag
       run: |
-       TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
-       echo "Latest tag is: $TAG"
-       echo "TAG=$TAG" >> $GITHUB_ENV
+        TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+        echo "Latest tag is: $TAG"
+        echo "TAG=$TAG" >> $GITHUB_ENV
 
-   # Increment the version tag
+    # Step 3: Increment the patch version manually
     - name: Increment Version
       id: increment_version
       run: |
-       VERSION="${{ env.TAG }}"
-       VERSION_PARTS=(${VERSION//./ })
-       PATCH_VERSION=${VERSION_PARTS[2]}
-       NEW_PATCH_VERSION=$((PATCH_VERSION + 1))
-       NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$NEW_PATCH_VERSION"
-       echo "New version is: $NEW_VERSION"
-       echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+        VERSION="${{ env.TAG }}"
+        VERSION_PARTS=(${VERSION//./ })
+        PATCH_VERSION=${VERSION_PARTS[2]#v}  # Remove the 'v' from the version string
+        NEW_PATCH_VERSION=$((PATCH_VERSION + 1))
+        NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$NEW_PATCH_VERSION"
+        echo "New version is: $NEW_VERSION"
+        echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
     # Build and push the Docker image with new version tag
     - name: Build and Push Docker Image
