@@ -1,12 +1,11 @@
 name: Flask API CI with Docker
-
+env:
+  BUILDKIT_IMAGE: moby/buildkit:buildx-stable-1
 on:
   push:
     branches:
       - main
-  release:
-    types:
-      - published
+  
 
 jobs:
   build-and-test:
@@ -28,6 +27,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+          version: ${{ inputs.buildx-version || env.BUILDX_VERSION }}
+          driver-opts: |
+            image=${{ inputs.buildkit-image || env.BUILDKIT_IMAGE }}
 
     # Log in to Docker Hub using secrets
     - name: Log in to Docker Hub
@@ -36,26 +41,16 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Set up Docker Buildx
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-
-    # Build and Push Docker Image
+     # Build and push Docker image
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v4
       with:
-        push: true
-        tags: |
-          rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
-
-    # Pull and Run Docker Image Locally
-    - name: Run Docker Image Locally
-      run: |
-        docker pull rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
-        docker run -d -p 5000:5000 rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
-        sleep 10 # Allow some time for the container to start
-        curl http://localhost:5000/get-items || (echo "Container failed to start" && exit 1)
-
+          push: true
+          tags: |
+            rajdeepsingh642/python-app:${{ github.sha }}
+       
+        
+    
     # Optional: EKS deployment steps (currently commented out)
     # - name: Configure AWS Credentials
     #   uses: aws-actions/configure-aws-credentials@v3
