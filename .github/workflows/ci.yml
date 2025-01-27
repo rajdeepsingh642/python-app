@@ -55,7 +55,7 @@ jobs:
       with:
           push: true
           tags: |
-            rajdeepsingh642/flask-cafeapp:${{ github.event.release.tag_name }}
+            rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
 
     
 
@@ -72,8 +72,8 @@ jobs:
     #  Pull and Run Docker Image
     - name: Run Docker Image Locally
       run: |
-        docker pull rajdeepsingh642/flask-cafeapp:${{ github.event.release.tag_name }}
-        docker run -d -p 5000:5000  rajdeepsingh642/flask-cafeapp:${{ github.event.release.tag_name }}
+        docker pull rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
+        docker run -d -p 5000:5000  rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
         sleep 10 # Allow some time for the container to start
         curl  http://localhost:5000/get-items || (echo "Container failed to start" && exit 1)
 # # : Configure kubectl for AWS EKS
