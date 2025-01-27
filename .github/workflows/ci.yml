@@ -49,12 +49,12 @@ jobs:
         push: true
         tags: |
           
-          kailash2222/flask-cafeapp:${{ env.BUILD_NUMBER }}
+          rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
    
     #  Pull and Run Docker Image
     - name: Run Docker Image Locally
       run: |
-        docker pull kailash2222/flask-cafeapp:${{ env.BUILD_NUMBER }}
+        docker pull rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
         docker run -d -p 5000:5000 rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
         sleep 10 # Allow some time for the container to start
         curl  http://localhost:5000/get-items || (echo "Container failed to start" && exit 1)
