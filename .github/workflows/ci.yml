@@ -55,8 +55,7 @@ jobs:
       with:
           push: true
           tags: |
-              rajdeepsingh642/flask-cafeapp:latest
-              rajdeepsingh642/flask-cafeapp:${{ github.event.release.tag_name }}
+            rajdeepsingh642/flask-cafeapp:${{ github.event.release.v26.0.0 }}
 
     
 
