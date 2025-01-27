@@ -36,31 +36,85 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Extract the GitHub Actions build number
-    - name: Set Build Number
-      id: build_number
-      run: echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
+    # # Extract the GitHub Actions build number
+    # - name: Set Build Number
+    #   id: build_number
+    #   run: echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
+     # Fetch the latest tag from the repository
+     - name: Get Latest Tag
+     id: get_latest_tag
+     run: |
+       TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+       echo "Latest tag is: $TAG"
+       echo "TAG=$TAG" >> $GITHUB_ENV
 
-    # Build and push the Docker image
+   # Increment the version tag
+   - name: Increment Version
+     id: increment_version
+     run: |
+       VERSION="${{ env.TAG }}"
+       VERSION_PARTS=(${VERSION//./ })
+       PATCH_VERSION=${VERSION_PARTS[2]}
+       NEW_PATCH_VERSION=$((PATCH_VERSION + 1))
+       NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$NEW_PATCH_VERSION"
+       echo "New version is: $NEW_VERSION"
+       echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+    # Build and push the Docker image with new version tag
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v4
       with:
         context: .
         push: true
         tags: |
-             rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
-             rajdeepsingh642/flask-cafeapp:22.0.1
-             rajdeepsingh642/flask-cafeapp:${{ github.ref_name }} 
-        # rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
+         
+          rajdeepsingh642/flask-cafeapp:${{ env.NEW_VERSION }}
+
+    # # Build and push the Docker image
+    # - name: Build and Push Docker Image
+    #   uses: docker/build-push-action@v4
+    #   with:
+    #     context: .
+    #     push: true
+    #     tags: |
+          
+    #       rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
    
     #  Pull and Run Docker Image
     - name: Run Docker Image Locally
       run: |
-        docker pull rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
-        docker run -d -p 5000:5000 rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
+        docker pull rajdeepsingh642/flask-cafeapp:${{ env.NEW_VERSION }}
+        docker run -d -p 5000:5000  rajdeepsingh642/flask-cafeapp:${{ env.NEW_VERSION }}
         sleep 10 # Allow some time for the container to start
         curl  http://localhost:5000/get-items || (echo "Container failed to start" && exit 1)
+# # : Configure kubectl for AWS EKS
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v3
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1 # Replace with your EKS region
+ # 2: Configure AWS Credentials via OIDC
+    # - name: Configure AWS Credentials
+    #   uses: aws-actions/configure-aws-credentials@v2
+    #   with:
+    #     role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+    #     aws-region: ${{ secrets.AWS_REGION }}
+#       - name: Update kubeconfig for EKS
+#         run: |
+#           aws eks update-kubeconfig --region us-east-1 --name your-cluster-name
 
+#       # Step 9: Deploy to EKS
+#       - name: Deploy to EKS
+#         run: |
+#           kubectl apply -f k8s/deployment.yaml
+#           kubectl apply -f k8s/service.yaml
+ # : Update EKS Cluster with New Image
+    # - name: Deploy to EKS
+    #   run: |
+    #     # Update Kubernetes deployment with new image
+    #     kubectl set image deployment/flask-deployment flask-container=rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
+    #     kubectl rollout status deployment/flask-deployment
    
    
   # #  Run Docker Container
