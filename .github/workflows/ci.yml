@@ -1,6 +1,5 @@
 name: Flask API CI with Docker
-env:
-  BUILDKIT_IMAGE: moby/buildkit:buildx-stable-1
+
 on:
   push:
     branches:
@@ -26,13 +25,13 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      with:
-          version: ${{ inputs.buildx-version || env.BUILDX_VERSION }}
-          driver-opts: |
-            image=${{ inputs.buildkit-image || env.BUILDKIT_IMAGE }}
+    - name: Generate version dynamically
+      id: versioning
+      run: |
+          timestamp=$(date +%Y%m%d%H%M%S)
+          new_version="v1.0.${timestamp}"
+          echo "New version: $new_version"
+          echo "new_version=$new_version" >> $GITHUB_ENV
 
     # Log in to Docker Hub using secrets
     - name: Log in to Docker Hub
@@ -42,12 +41,14 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
      # Build and push Docker image
-    - name: Build and Push Docker Image
+    - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
+          context: .
           push: true
           tags: |
-            rajdeepsingh642/python-app:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/python-app:${{ env.new_version }}
+            
        
         
     
