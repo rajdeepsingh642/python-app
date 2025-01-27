@@ -41,17 +41,17 @@ jobs:
     #   id: build_number
     #   run: echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
      # Fetch the latest tag from the repository
-     - name: Get Latest Tag
-     id: get_latest_tag
-     run: |
+    - name: Get Latest Tag
+      id: get_latest_tag
+      run: |
        TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
        echo "Latest tag is: $TAG"
        echo "TAG=$TAG" >> $GITHUB_ENV
 
    # Increment the version tag
-   - name: Increment Version
-     id: increment_version
-     run: |
+    - name: Increment Version
+      id: increment_version
+      run: |
        VERSION="${{ env.TAG }}"
        VERSION_PARTS=(${VERSION//./ })
        PATCH_VERSION=${VERSION_PARTS[2]}
