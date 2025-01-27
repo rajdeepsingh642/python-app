@@ -13,17 +13,17 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    #   Checkout the repository
+    # Checkout the repository
     - name: Checkout code
       uses: actions/checkout@v3
 
-    #  Set up Python (optional, for dependencies check)
+    # Set up Python (optional, for dependencies check)
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.9"
 
-    #  Install dependencies
+    # Install dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -36,87 +36,39 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # # Extract the GitHub Actions build number
-    # - name: Set Build Number
-    #   id: build_number
-    #   run: echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
-     # Fetch the latest tag from the repository
+    # Set up Docker Buildx
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Log in to DockerHub
-      uses: docker/login-action@v2
-      with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
+    # Build and Push Docker Image
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v4
       with:
-          push: true
-          tags: |
-            rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
+        push: true
+        tags: |
+          rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
 
-    
-
-    # # Build and push the Docker image
-    # - name: Build and Push Docker Image
-    #   uses: docker/build-push-action@v4
-    #   with:
-    #     context: .
-    #     push: true
-    #     tags: |
-          
-    #       rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
-   
-    #  Pull and Run Docker Image
+    # Pull and Run Docker Image Locally
     - name: Run Docker Image Locally
       run: |
         docker pull rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
-        docker run -d -p 5000:5000  rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
+        docker run -d -p 5000:5000 rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
         sleep 10 # Allow some time for the container to start
-        curl  http://localhost:5000/get-items || (echo "Container failed to start" && exit 1)
-# # : Configure kubectl for AWS EKS
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v3
-#         with:
-#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           aws-region: us-east-1 # Replace with your EKS region
- # 2: Configure AWS Credentials via OIDC
-    # - name: Configure AWS Credentials
-    #   uses: aws-actions/configure-aws-credentials@v2
-    #   with:
-    #     role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-    #     aws-region: ${{ secrets.AWS_REGION }}
-#       - name: Update kubeconfig for EKS
-#         run: |
-#           aws eks update-kubeconfig --region us-east-1 --name your-cluster-name
+        curl http://localhost:5000/get-items || (echo "Container failed to start" && exit 1)
 
-#       # Step 9: Deploy to EKS
-#       - name: Deploy to EKS
-#         run: |
-#           kubectl apply -f k8s/deployment.yaml
-#           kubectl apply -f k8s/service.yaml
- # : Update EKS Cluster with New Image
+    # Optional: EKS deployment steps (currently commented out)
+    # - name: Configure AWS Credentials
+    #   uses: aws-actions/configure-aws-credentials@v3
+    #   with:
+    #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     aws-region: us-east-1 # Replace with your EKS region
+
+    # - name: Update kubeconfig for EKS
+    #   run: |
+    #     aws eks update-kubeconfig --region us-east-1 --name your-cluster-name
+
     # - name: Deploy to EKS
     #   run: |
-    #     # Update Kubernetes deployment with new image
-    #     kubectl set image deployment/flask-deployment flask-container=rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
-    #     kubectl rollout status deployment/flask-deployment
-   
-   
-  # #  Run Docker Container
-  #   - name: Run Docker Container
-  #     run: |
-  #       docker run -d -p 5000:5000 --name flask-api-test flask-api:latest
-
-  #   #  Test Flask API
-  #   - name: Test Flask API
-  #     run: |
-  #       sleep 5  # Give time for the container to start
-  #       curl http://localhost:5000/get-items || exit 1
-
-  ##rajdeepsingh642/flask-cafeapp:latest
-
-   
+    #     kubectl apply -f k8s/deployment.yaml
+    #     kubectl apply -f k8s/service.yaml
