@@ -28,7 +28,7 @@ jobs:
     - name: Generate version dynamically
       id: versioning
       run: |
-          timestamp=$(date +%Y%m%d%H)
+          timestamp=$(date +%Y-%m-%d-%H)
           new_version="v1.0.${timestamp}"
           echo "New version: $new_version"
           echo "new_version=$new_version" >> $GITHUB_ENV
