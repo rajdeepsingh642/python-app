@@ -48,8 +48,10 @@ jobs:
         context: .
         push: true
         tags: |
-          
-          rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
+             rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
+             rajdeepsingh642/flask-cafeapp:22.0.1
+             rajdeepsingh642/flask-cafeapp:${{ github.ref_name }} 
+        # rajdeepsingh642/flask-cafeapp:${{ env.BUILD_NUMBER }}
    
     #  Pull and Run Docker Image
     - name: Run Docker Image Locally
