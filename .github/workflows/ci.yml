@@ -1,9 +1,9 @@
 name: Flask API CI with Docker
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - published
   
 
 jobs:
