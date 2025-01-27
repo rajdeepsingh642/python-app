@@ -10,7 +10,7 @@ items =  {
 
         "d786fd9073a54cf9aa2574662b1c4623":{
                                            "name": "Momos",
-                                            "price": 60
+                                            "price": 100
                                              }
 
 }
