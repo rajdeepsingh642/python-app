@@ -26,36 +26,29 @@ jobs:
 
   
 
-    # Log in to Docker Hub using secrets
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v4
-      with:
-          push: true
-          tags: |
-          
-           rajdeepsingh642/python-app:${{ github.event.release.tag_name }}
-       
-        
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1  
     
-    # Optional: EKS deployment steps (currently commented out)
-    # - name: Configure AWS Credentials
-    #   uses: aws-actions/configure-aws-credentials@v3
-    #   with:
-    #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     aws-region: us-east-1 # Replace with your EKS region
 
-    # - name: Update kubeconfig for EKS
-    #   run: |
-    #     aws eks update-kubeconfig --region us-east-1 --name your-cluster-name
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
-    # - name: Deploy to EKS
-    #   run: |
-    #     kubectl apply -f k8s/deployment.yaml
-    #     kubectl apply -f k8s/service.yaml
+    - name: Build and Push Docker Image with Multiple Tags
+      env:
+          ECR_REPO:  992382813442.dkr.ecr.ap-south-1.amazonaws.com/python-app
+          IMAGE_TAGS: "prod1 prod2 prod3 prod4"
+      run: |
+          # Build the Docker image
+          docker build -t python-app:latest .
+
+          # Loop through each tag and push the image
+          for TAG in $IMAGE_TAGS; do
+            echo "Pushing image to $ECR_REPO:$TAG..."
+            docker tag python-app:latest $ECR_REPO:$TAG-${{ github.event.release.tag_name }}
+            docker push $ECR_REPO:$TAG-${{ github.event.release.tag_name }}
+          done
