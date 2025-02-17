@@ -9,7 +9,7 @@ env:
   AWS_REGION: ap-south-1  
   ECR_REPO: 992382813442.dkr.ecr.ap-south-1.amazonaws.com/python-app
   IMAGE_TAGS: "prod1"
-  EC2_INSTANCE_IP: "65.0.135.154"  # Replace with your EC2 public IP
+  EC2_INSTANCE_IP: "3.110.84.75"  # Replace with your EC2 public IP
   SSH_USER: "ubuntu" 
 jobs:
   build-and-test:
