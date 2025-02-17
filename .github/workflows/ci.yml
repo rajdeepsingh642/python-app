@@ -70,7 +70,7 @@ jobs:
       
       - name: Login to AWS ECR
         run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ env.ECR_REPO }}
+          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${{ env.ECR_REPO }}
       - name:  Deploy
         run:  docker pull ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}   
        # docker pull ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
