@@ -5,7 +5,7 @@ on:
     types:
       - published
   
-# env:
+
 #   AWS_REGION: ap-south-1  
 #   ECR_REPO: 992382813442.dkr.ecr.ap-south-1.amazonaws.com/python-app
 #   IMAGE_TAGS: "prod1"
@@ -66,22 +66,18 @@ jobs:
      runs-on: self-hosted
 
      steps:
+     
+      
       - name: Login to AWS ECR
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPO }}
       - name:  Deploy
-        # uses: appleboy/ssh-action@v0.1.10
-        # with:
-        #   host: ${{ secrets.EC2_INSTANCE_IP }}
-        #   username: ${{ secrets.SSH_USER }}
-        #   key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          # script: |
-          #   sudo apt-get update && sudo apt-get install -y awscli
-          #   aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REPO }}
-          #   docker stop flask-api || true
-          #   docker rm flask-api || true
-        
-        run:   docker pull ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
+        run:  docker pull ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}   
+       # docker pull ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
+      - name: Stop and Remove Existing Container (if running)
+        run: |
+          docker stop flask-api || true
+          docker rm flask-api || true
       - name: run image
         run: docker run  --name flask-api -d -p 5000:5000 ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
           
