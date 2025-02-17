@@ -81,8 +81,7 @@ jobs:
           #   docker stop flask-api || true
           #   docker rm flask-api || true
         
-        run:   
-                docker pull ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
+        run:   docker pull ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
       - name: run image
         run: docker run  --name flask-api -d -p 5000:5000 ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
           
