@@ -1,11 +1,11 @@
 version: '3.8'
 services:
   flask-api:
-  build:
+   build:
       context: .
       dockerfile: Dockerfile
-    image: ${DOCKER_REPO}:${IMAGE_TAG}  
-    container_name: flask-api
-    ports:
+   image: ${DOCKER_REPO}:${IMAGE_TAG}  
+   container_name: flask-api
+   ports:
       - "5000:5000"
     
