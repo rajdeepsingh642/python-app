@@ -72,11 +72,15 @@ jobs:
           host: ${{ env.EC2_INSTANCE_IP }}
           username: ${{ env.SSH_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          # script: |
+          #   sudo apt-get update && sudo apt-get install -y awscli
+          #   aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REPO }}
+          #   docker stop flask-api || true
+          #   docker rm flask-api || true
+          #   docker pull $ECR_REPO:$IMAGE_TAGS-${{ github.event.release.tag_name }}
+          #   docker run -d --name flask-api -p 5000:5000 ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
+          port: 22                              # Default SSH port
           script: |
-            sudo apt-get update && sudo apt-get install -y awscli
-            aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REPO }}
-            docker stop flask-api || true
-            docker rm flask-api || true
-            docker pull $ECR_REPO:$IMAGE_TAGS-${{ github.event.release.tag_name }}
-            docker run -d --name flask-api -p 5000:5000 ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
-  
+            # Check the /etc/passwd file and show the first 10 lines
+            cat /etc/passwd | head -n 10
+
