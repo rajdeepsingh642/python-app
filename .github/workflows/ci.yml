@@ -1,16 +1,16 @@
-ename: Flask API CI with Docker
+name: Flask API CI with Docker
 
 on:
   release:
     types:
       - published
   
-env:
-  AWS_REGION: ap-south-1  
-  ECR_REPO: 992382813442.dkr.ecr.ap-south-1.amazonaws.com/python-app
-  IMAGE_TAGS: "prod1"
-  EC2_INSTANCE_IP: "3.110.84.75"  # Replace with your EC2 public IP
-  SSH_USER: "ubuntu" 
+# env:
+#   AWS_REGION: ap-south-1  
+#   ECR_REPO: 992382813442.dkr.ecr.ap-south-1.amazonaws.com/python-app
+#   IMAGE_TAGS: "prod1"
+#   EC2_INSTANCE_IP: "3.110.84.75"  # Replace with your EC2 public IP
+#   SSH_USER: "ubuntu" 
 jobs:
   build-and-test:
     runs-on: ubuntu-24.04
@@ -69,8 +69,8 @@ jobs:
       - name: SSH into EC2 and Deploy
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ env.EC2_INSTANCE_IP }}
-          username: ${{ env.SSH_USER }}
+          host: ${{ secrets.EC2_INSTANCE_IP }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           # script: |
           #   sudo apt-get update && sudo apt-get install -y awscli
