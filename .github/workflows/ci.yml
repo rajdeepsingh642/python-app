@@ -1,4 +1,4 @@
-name: Flask API CI with Docker
+ename: Flask API CI with Docker
 
 on:
   release:
@@ -73,6 +73,7 @@ jobs:
           username: ${{ env.SSH_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
+            sudo apt-get update && sudo apt-get install -y awscli
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REPO }}
             docker stop flask-api || true
             docker rm flask-api || true
