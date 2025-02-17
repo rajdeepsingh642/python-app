@@ -54,4 +54,4 @@ jobs:
           # done
              docker build -t python-app:latest .
              docker tag python-app:latest $ECR_REPO:$IMAGE_TAGS-${{ github.event.release.tag_name }}
-             docker push $ECR_REPO:$TAG-$IMAGE_TAGS{{ github.event.release.tag_name }}
+             docker push $ECR_REPO:$IMAGE_TAGS-${{ github.event.release.tag_name }}
