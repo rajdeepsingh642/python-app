@@ -77,7 +77,7 @@ jobs:
           #   aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REPO }}
           #   docker stop flask-api || true
           #   docker rm flask-api || true
-        run:   docker pull $ECR_REPO:$IMAGE_TAGS-${{ github.event.release.tag_name }}
+        run:   docker pull ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
                docker run -d --name flask-api -p 5000:5000 ${{ env.ECR_REPO }}:${{ env.IMAGE_TAGS }}-${{ github.event.release.tag_name }}
           
      
