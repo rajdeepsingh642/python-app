@@ -40,7 +40,7 @@ jobs:
           docker-compose build
         
           # Tag the image with the release tag
-          docker tag python-app:latest $DOCKER_REPO:$IMAGE_TAG
+          docker tag ${DOCKER_REPO}:${IMAGE_TAG} $DOCKER_REPO:$IMAGE_TAG
           
           # Push the image to Docker Hub
           docker push $DOCKER_REPO:$IMAGE_TAG
