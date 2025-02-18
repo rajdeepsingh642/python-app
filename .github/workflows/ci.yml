@@ -74,14 +74,21 @@ jobs:
          # Pull the Docker image with the release tag from Docker Hub
          # docker pull $DOCKER_REPO:$RELEASE_TAG
            docker pull $DOCKER_REPO:$IMAGE_TAG
+     
      - name: Checkout Repository
        uses: actions/checkout@v4
+     
      - name: Create .env File
        run: |
         echo "DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/python-app" > .env
         echo "IMAGE_TAG=${{ github.event.release.tag_name }}" >> .env
-       
-
+     
+     - name: Stop and Remove Old Container 
+       run: |
+         
+           docker stop flask-api || echo "No running container found"
+           docker rm flask-api || echo "No container found to remove"  
+        
      - name: Start Services with Docker Compose
        run: docker-compose --env-file .env up -d
 
