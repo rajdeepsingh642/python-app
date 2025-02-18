@@ -74,6 +74,8 @@ jobs:
          # Pull the Docker image with the release tag from Docker Hub
          # docker pull $DOCKER_REPO:$RELEASE_TAG
            docker pull $DOCKER_REPO:$IMAGE_TAG
+     - name: Checkout Repository
+       uses: actions/checkout@v4
      - name: Create .env File
        run: |
         echo "DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/python-app" > .env
