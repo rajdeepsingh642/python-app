@@ -74,6 +74,14 @@ jobs:
          # Pull the Docker image with the release tag from Docker Hub
          # docker pull $DOCKER_REPO:$RELEASE_TAG
            docker pull $DOCKER_REPO:$IMAGE_TAG
-         
+     - name: Create .env File
+       run: |
+        echo "DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/python-app" > .env
+        echo "IMAGE_TAG=${{ github.event.release.tag_name }}" >> .env
+       
+
      - name: Start Services with Docker Compose
        run: docker-compose --env-file .env up -d
+
+         
+     
