@@ -75,5 +75,5 @@ jobs:
          # docker pull $DOCKER_REPO:$RELEASE_TAG
            docker pull $DOCKER_REPO:$IMAGE_TAG
          
-         # Run the Docker Compose command to bring up the container
-         docker-compose up -d
+     - name: Start Services with Docker Compose
+       run: docker-compose --env-file .env up -d
