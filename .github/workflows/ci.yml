@@ -73,11 +73,11 @@ jobs:
 
       - name: Copy Docker Compose File to EC2
         run: |
-          scp -i private_key.pem docker-compose.yml ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ec2-user/
+          scp -i private_key.pem docker-compose.yml -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ec2-user/
 
       - name: SSH into EC2 & Deploy
         run: |
-          ssh -i private_key.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+            ssh -i private_key.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
             docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
             docker pull ${{ secrets.DOCKER_USERNAME }}/python-app:${{ github.event.release.tag_name }}
             
