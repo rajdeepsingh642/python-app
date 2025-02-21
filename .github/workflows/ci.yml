@@ -62,9 +62,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Pull Docker Image from Docker Hub
-        run: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/python-app:${{ github.event.release.tag_name }}
+      # - name: Pull Docker Image from Docker Hub
+      #   run: |
+      #     docker pull ${{ secrets.DOCKER_USERNAME }}/python-app:${{ github.event.release.tag_name }}
 
       - name: Setup SSH Key
         run: |
